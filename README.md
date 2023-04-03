@@ -20,4 +20,4 @@ file                      | description
 The complete genotype-, proteomics- and clinical data are available from the authors upon reasonable request.
 
 ## Summary of the study
-![alt text](Images/Study_overview.jpg)
+![alt text](Images/Figure 1.jpg)
