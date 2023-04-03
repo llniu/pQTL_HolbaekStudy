@@ -1,0 +1,5 @@
+#run gemma (script_gemma.sh)
+gemma -bfile target5 -n $PHENOTYPE -k target5.cXX.txt -c covariates.txt -lmm -o $PHENOTYPE -outdir $PHENOTYPE
+
+#clump assoc results
+plink --bfile ../../target4 --clump assoc.txt --clump-field p_wald --clump-snp-field rs --clump-r2 0.2 --clump-kb 1000 --clump-p1 5e-8
