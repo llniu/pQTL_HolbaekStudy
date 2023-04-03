@@ -2,6 +2,7 @@
 
 - Link to repository: [github.com/llniu/pQTL_HolbaekStudy](https://github.com/llniu/pQTL_HolbaekStudy)
 - Link to preprint on medRxiv: [Plasma Proteome Variation and its Genetic Determinants in Children and Adolescents](https://www.medrxiv.org/content/10.1101/2023.03.31.23287853v1)
+- Searchable results at [proteomevariation.org](http://proteomevariation.org/)
 - summary of custom scripts used for diverse analysis in the project
 - 2,147 children and adolescents in the discovery cohort
 - 588 adults with alcohol-related liver diseasse in the replication cohort
