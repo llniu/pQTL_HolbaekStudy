@@ -1,0 +1,9 @@
+cff-version: 1.1.0
+message: "This repository can be cited as below."
+authors:
+- family-names: Niu
+  given-names: Lili
+orcid: https://orcid.org/0000-0003-4571-4368
+title:llniu/pQTL_HolbaekStudy: Initial release
+version: v1.0.0
+date-released: 2024-12-12
