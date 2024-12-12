@@ -1,5 +1,7 @@
 # pQTL_HolbaekStudy
 
+[![DOI](https://zenodo.org/badge/621202145.svg)](https://doi.org/10.5281/zenodo.14426436)
+
 - Link to repository: [github.com/llniu/pQTL_HolbaekStudy](https://github.com/llniu/pQTL_HolbaekStudy)
 - Link to preprint on medRxiv: [Plasma Proteome Variation and its Genetic Determinants in Children and Adolescents](https://www.medrxiv.org/content/10.1101/2023.03.31.23287853v1)
 - Searchable results at [proteomevariation.org](http://proteomevariation.org/)
