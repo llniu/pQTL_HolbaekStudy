@@ -2,4 +2,8 @@
 gemma -bfile target5 -n $PHENOTYPE -k target5.cXX.txt -c covariates.txt -lmm -o $PHENOTYPE -outdir $PHENOTYPE
 
 #clump assoc results
-plink --bfile ../../target4 --clump assoc.txt --clump-field p_wald --clump-snp-field rs --clump-r2 0.2 --clump-kb 1000 --clump-p1 5e-8
+plink --bfile ../../target5 --clump assoc.txt --clump-field p_wald --clump-snp-field rs --clump-r2 0.2 --clump-kb 1000 --clump-p1 5e-8
+
+#run cojo
+gcta --bfile ../target5 --maf 0.05 --cojo-file results/protein.assoc.cojo.txt --cojo-slct --out results/assoc/cojo/protein
+
