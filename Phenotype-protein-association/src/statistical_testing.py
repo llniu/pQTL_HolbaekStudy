@@ -2,6 +2,8 @@ import statsmodels.stats.multitest as multi
 import pandas as pd
 import numpy as np
 import pingouin as pg
+from tqdm import tqdm
+
 def pg_ttest(data, group_col, group1, group2, fdr=0.05, value_col='MS signal [Log2]'):
     '''
     data: long data format with ProteinID as index, one column of protein levels, other columns of grouping.
@@ -59,47 +61,56 @@ def normality_pg (data, dv, group, method='shapiro'):
     """
     columns = ['index', 'W', 'pval', 'normal']
     scores = pd.DataFrame(columns = columns)
+    scores = []
     for i in list(set(data.index)):
         df_normality = data.loc[i]
         normality = pg.normality(data=df_normality, dv=dv, group=group, method=method).reset_index()
-        normality['protein'] = i
         scores = scores.append(normality, sort=False)
     scores = scores.assign(new_column = lambda x: -np.log10(scores['pval']), sort = False)
     scores = scores.rename({'new_column' : '-Log pvalue'}, axis = 1)
     
     return scores
 
-def linear_regression_pg(data, dep_var_list, indep_var, covariates):
+def perform_linear_regression(data, dep_vars, covariates, fdr_method='indep'):
     """
-    Wrapper of pingouin.linear_regression for multiple testing. 
-    Parameters
-    ----------
-    data: pandas dataframe wide format with rows of observations/samples and columns of proteins and phenotypic traits.
-    covariates: list of covariates
-    ----------
+    Performs linear regression on a given dataset for multiple dependent variables.
+
+    This function iterates over a list of dependent variables (dep_vars), performing linear regression against specified covariates for each. It handles missing data, calculates the residuals, and applies FDR correction to the p-values. It also determines the direction of the relationships.
+
+    Parameters:
+    data (pd.DataFrame): The dataset containing dependent variables and covariates.
+    dep_vars (list): A list of column names in 'data' to be treated as dependent variables.
+    covariates (list): A list of column names in 'data' to be used as covariates in the linear regression.
+
+    Returns:
+    tuple: A tuple containing two elements:
+        - pd.DataFrame: A DataFrame with regression statistics for each dependent variable.
+        - dict: A dictionary of residuals for each dependent variable.
     """
-    scores = []
-    dict_residuals = {}
-    df = data.copy()
-    for dep_var in dep_var_list:
-        df_test = df[[dep_var, indep_var]+covariates].dropna()
-        X=df_test[[indep_var]+covariates]
-        y=df_test[dep_var]
-        lm = pg.linear_regression(X=X, y=y,relimp=True )
-        lm['dep_var']=dep_var
-        residuals = pd.Series(lm.residuals_, index=df_test.index)
-        scores.append(lm)
-        dict_residuals[dep_var]=residuals
-    scores=pd.concat(scores)
-    #FDR correction
-    reject, qvalue = multi.fdrcorrection(scores['pval'], alpha=0.05, method='indep')
-    scores['qvalue'] = qvalue
-    scores['rejected'] = reject
-    scores['-Log10 P-value'] = -np.log10(scores['pval'])
-    scores['direction']=np.where(scores['coef']>0, 'pos', 'neg')
-    scores.loc[scores.rejected == False, 'direction']='not significant'  
-    residuals_df = pd.DataFrame.from_dict(dict_residuals)
-    return(scores, residuals_df)
+
+    stats, residuals = [], {}
+    for dep_var in tqdm(dep_vars):
+        df = data[[dep_var] + covariates].dropna()
+        lm = pg.linear_regression(X=df[covariates], y=df[dep_var], relimp=True)
+        residuals[dep_var] = pd.Series(lm.residuals_, index=df.index)
+        lm = lm.assign(dep_var=dep_var, nr_obs=df.shape[0], df_model=lm.df_model_, df_residual=lm.df_resid_)
+        stats.append(lm)
+
+    stats = pd.concat(stats)
+    if fdr_method=='indep':
+        reject, qvalue = multi.fdrcorrection(stats['pval'], alpha=0.05, method=fdr_method)
+        stats = stats.assign(qvalue=qvalue, rejected=reject)
+    elif fdr_method == 'bonferroni':
+        bonferroni_thresh = 0.05/len(dep_vars)
+        stats['rejected']=np.where(stats['pval']<bonferroni_thresh, True, False)
+    stats['-Log10 P-value'] = -np.log10(stats['pval'])
+    stats['direction'] = np.where(stats['coef'] > 0, 'pos', 'neg')
+    stats.loc[~stats['rejected'], 'direction'] = 'not significant'
+
+    return stats, residuals
+
+# Example usage:
+# stats, residuals = perform_linear_regression(data, dep_vars, covariates)
 
 def logistic_regression_pg(data, dep_var_list, indep_var, covariates):
     """
