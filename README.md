@@ -15,7 +15,7 @@
 
 file                      | description
 ------------------------- | --------------------------------------
-[Phenotype-protein association analysis](Phenotype-protein-association/target_discovery_proteomics_data_processing.ipynb)    | Contains data pre-processing, association tests between levels of plasma proteins and age, sex and BMI SDS. Some functionality is loaded from [`src`](Phenotype-protein-association/src)
+[Phenotype-protein association analysis](Phenotype-protein-association/target_discovery_proteomics_data_processing.ipynb)    | Contains data pre-processing, association tests between levels of plasma proteins and age, sex and BMI SDS. Some functionality is loaded from [`src`](src)
 [Genome-wide association analysis](Genotype-protein-association/scripts.txt) | Contains scripts used for genome wide association analyis and clumping precedure.
 [Genome-wide association analysis - downstream](Genotype-protein-association/pqtl-NG.ipynb)    | Contains custom scripts used for summarizing proteome-wide GWAS results.
 
